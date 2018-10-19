@@ -9,6 +9,9 @@ import withClass from '../hoc/_withClass';
 //import WithClass from '../hoc/WithClass';
 //import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 
+
+export const AuthContext = React.createContext(false);
+
 class App extends PureComponent {
   constructor(props){
     super(props);
@@ -20,7 +23,8 @@ class App extends PureComponent {
       ],
       otherState: 'Some other state',
       showPersons: false,
-      toggleClicked: 0
+      toggleClicked: 0,
+      authenticated: false
     }
     console.log('[App.js] Inside Constructor', props);
   }
@@ -39,6 +43,15 @@ class App extends PureComponent {
   //   return nextState.persons !== this.state.persons ||
   //   nextState.showPersons !== this.state.showPersons;
   // }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    console.log('[App.js] getDerivedStateFromProps', nextProps, prevState);
+    return prevState;
+  }
+
+  getSnapshotBeforeUpdate() {
+    console.log('[App.js] getSnapshotBeforeUpdate');
+  }
   
 
   
@@ -81,6 +94,11 @@ class App extends PureComponent {
 
   }
 
+  loginHandler= () => {
+    this.setState({authenticated: true})
+
+  }
+
   render() {
     console.log('[App.js] render()');
     let persons = null;
@@ -108,8 +126,10 @@ class App extends PureComponent {
             showPersons={this.state.showPersons} 
             persons={this.state.persons}
             clicked={this.togglePersonsHandler}
-          />             
-          {persons}       
+            login={this.loginHandler}
+          />
+          <AuthContext.Provider value={this.state.authenticated}>{persons}</AuthContext.Provider>            
+                 
         </Aux>     
     );
   }
