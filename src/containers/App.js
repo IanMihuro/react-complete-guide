@@ -3,7 +3,10 @@ import React, { PureComponent } from 'react';
 import classes from './App.css';
 import Persons from '../components/Persons/Persons';
 import Cockpit from '../components/Cockpit/Cockpit';
-import WithClass from '../hoc/WithClass';
+import Aux from '../hoc/_Aux';
+import withClass from '../hoc/_withClass';
+
+//import WithClass from '../hoc/WithClass';
 //import ErrorBoundary from '../components/ErrorBoundary/ErrorBoundary';
 
 class App extends PureComponent {
@@ -11,12 +14,13 @@ class App extends PureComponent {
     super(props);
     this.state = {
       persons: [
-        {id: 'asd1', name: 'Max', age: '28'},
-        {id: 'bvfr2', name: 'Manu', age: '29'},
-        {id: 'yuter3', name: 'Stephanie', age: '26'}
+        {id: 'asd1', name: 'Max', age: 28},
+        {id: 'bvfr2', name: 'Manu', age: 29},
+        {id: 'yuter3', name: 'Stephanie', age: 26}
       ],
       otherState: 'Some other state',
-      showPersons: false
+      showPersons: false,
+      toggleClicked: 0
     }
     console.log('[App.js] Inside Constructor', props);
   }
@@ -66,7 +70,14 @@ class App extends PureComponent {
 
   togglePersonsHandler = () => {
     const doesShow = this.state.showPersons;
-    this.setState({showPersons: !doesShow}); 
+    // Best practice of mutating State
+    this.setState((prevState, props) =>{
+      return {
+        showPersons: !doesShow,
+        toggleClicked: prevState.toggleClicked + 1
+      }
+    }
+    ); 
 
   }
 
@@ -90,7 +101,7 @@ class App extends PureComponent {
     }  
 
     return (
-      <WithClass classes={classes.App}>        
+      <Aux>        
          <button onClick={()=> {this.setState({showPersons: true})}}>Show Person</button>
           <Cockpit
             appTitle={this.props.appTitle} 
@@ -99,9 +110,9 @@ class App extends PureComponent {
             clicked={this.togglePersonsHandler}
           />             
           {persons}       
-        </WithClass>     
+        </Aux>     
     );
   }
 }
 
-export default App;
+export default withClass(App, classes.App);
